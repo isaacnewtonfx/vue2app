@@ -1,7 +1,8 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Home from './views/Home.vue'
-import Coins from './components/Coins.vue'
+import Coins from './views/Coins.vue'
+import ChildView from "./components/ChildView.vue"
 
 Vue.use(Router)
 
@@ -15,7 +16,11 @@ export default new Router({
     {
       path: '/coins/:id',
       name: 'coins',
-      component: Coins
+      component: Coins,
+      children: [{
+        path: "childview",
+        component: ChildView
+      }]
     },
     {
       path: '/about',

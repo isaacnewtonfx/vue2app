@@ -1,5 +1,14 @@
 <template>
-  <div>
+  <div class="coins">
+
+    <Header/>
+
+    <div v-if="param_id=='all'">
+      <router-link to="/coins/all/childview">Show Child View</router-link>
+    </div>
+
+    <!-- show child view here -->
+    <router-view></router-view>
 
     <div v-if="isLoading">
       <div class="container">
@@ -14,12 +23,16 @@
         <div class="line"></div>
         <div class="line"></div>
       </div>
-    </div>    
+    </div>  
+
+    
+
       <div v-else-if="singleCoin">
         <p>Name: {{ coinData.name }}</p>
         <p>Symbol: {{ coinData.symbol }}</p>
         <p>Price (USD): ${{ coinData.price_usd.toLocaleString('en') }}</p>
       </div>
+
       <div v-else>
         <table>
           <tr>
@@ -36,7 +49,7 @@
             <td style="text-align:left;"> 
               <img v-bind:src="getImageUrl(k)" class="logo-sprite" alt="Bitcoin" width="16" height="16"> {{ row.name}}
             </td>
-            <td>{{row.quotes.USD.market_cap}}</td>
+            <td>${{row.quotes.USD.market_cap.toLocaleString('en')}}</td>
             <td>${{row.quotes.USD.price.toLocaleString('en')}}</td>
             <td>${{row.quotes.USD.volume_24h.toLocaleString('en')}}</td>
             <td>${{row.circulating_supply.toLocaleString('en')}}</td>
@@ -45,19 +58,27 @@
         </table>
       </div>
 
+
+      <Footer/>
+
+
   </div>
 </template>
+
 <script>
   //import axios from 'axios'
+  import Header from '../components/Header.vue'
+  import Footer from '../components/Footer.vue'
 
   export default {
     name: 'Coins',
-
+    components: {Header, Footer},
     data() {
       return {
         isLoading:true,
         coinData: {},
         singleCoin:false,
+        param_id:null
       }
     },
 
@@ -68,7 +89,11 @@
     watch: {
       '$route': 'fetchData'
     },
-
+     computed: {
+      getParamId () {
+        return this.param_id
+      }
+    },
     methods: {
         isEmpty(obj) { 
             for ( var prop in obj ) { 
@@ -92,6 +117,8 @@
         // })
 
         const id = this.$route.params.id
+        this.param_id = id
+      
 
         if(id == "all"){
             thisComponent.singleCoin = false
